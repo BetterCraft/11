@@ -20,15 +20,16 @@ function Givedate() {
   
     return formattedToday;
 }
-function toggleButton(x){
+function toggleButton(x,id,avatar){
     toggleTheme()
     // console.log(`localm://suhani/${Givedate()}`)
     if(x=="s"){
         audioElement.play();
-        window.open(`localm://suhani/${Givedate()}`, "_self");
+        // console.log(`localm://suhani/${Givedate()}/${id}/${avatar}`)
+        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}`, "_self");
     }else if(x=="m"){
         audioElement.play();
-        window.open(`localm://mascot/${Givedate()}`, "_self");
+        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}`, "_self");
     }else{
         audioElement.play();
         window.open(`${x}`, "_self");

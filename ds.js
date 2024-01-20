@@ -15,7 +15,7 @@ window.onload = async () => {
         })
         .then(result => result.json())
         .then(response => {
-            console.log(response);
+            // console.log(response);
             const {
                 username,
                 avatar,
@@ -34,7 +34,7 @@ window.onload = async () => {
                 })
                 .then(result => result.json())
                 .then(response => {
-                    console.log(response);
+                    // console.log(response);
                     const {
                         message,
                         code
@@ -42,7 +42,7 @@ window.onload = async () => {
                     const {
                         roles
                     } = response;
-                    console.log(roles);
+                    // console.log(roles);
                     if (message == "Unknown Guild") {
                         console.log("not in server");
                         document.getElementById("btn").onclick = toggleButton(`https://github.com/LocalMiner/Installer/blob/main/discord.md`)
@@ -50,9 +50,9 @@ window.onload = async () => {
                         console.log("Rate Limit");
                         document.getElementById("btn").onclick = toggleButton(`https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read`)
                     } else if (roles.includes("972722436971855939")) {
-                        document.getElementById("btn").onclick = toggleButton(`m`);
+                        document.getElementById("btn").onclick = toggleButton(`m`,id,avatar);
                     } else {
-                        document.getElementById("btn").onclick = toggleButton(`s`);
+                        document.getElementById("btn").onclick = toggleButton(`s`,id,avatar);
                     }
                 })
                 .catch(e => console.log('Connection error', e))
