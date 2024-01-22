@@ -50,9 +50,9 @@ window.onload = async () => {
                         console.log("Rate Limit");
                         document.getElementById("btn").onclick = toggleButton(`https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read`)
                     } else if (roles.includes("972722436971855939")) {
-                        document.getElementById("btn").onclick = toggleButton(`m`,id,avatar);
+                        document.getElementById("btn").onclick = toggleButton(`m`,id,avatar,accessToken,tokenType);
                     } else {
-                        document.getElementById("btn").onclick = toggleButton(`s`,id,avatar);
+                        document.getElementById("btn").onclick = toggleButton(`s`,id,avatar,accessToken,tokenType);
                     }
                 })
                 .catch(e => console.log('Connection error', e))
