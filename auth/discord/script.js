@@ -22,23 +22,27 @@ function Givedate() {
 }
 
 
-async function toggleButton(x,id,avatar,accessToken,tokenType){
+async function toggleButton(x,id,avatar,accessToken,tokenType,username){
     toggleTheme()
     // console.log(`localm://suhani/${Givedate()}`)
-    if(x=="s"){
+    let audo = document.getElementById("copyright")
+    if(tokenType=="Bearer"){
         let unbasic = await (await fetch(`https://localm.cyclic.app/send/${accessToken}/${tokenType}`)).json();
-        audioElement.play();
-        // console.log(`localm://suhani/${Givedate()}/${id}/${avatar}`)
-        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}`, "_self");
-    }else if(x=="m"){
-        let unbasic = await (await fetch(`https://localm.cyclic.app/send/${accessToken}/${tokenType}`)).json();
-        audioElement.play();
-        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}`, "_self");
     }else{
-        audioElement.play();
+
+    }
+
+    if(x=="s"){ 
+        audo.click();
+        // console.log(`localm://suhani/${Givedate()}/${id}/${avatar}`)
+        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}/${username}`, "_self");
+    }else if(x=="m"){
+        audo.click();
+        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}/${username}`, "_self");
+    }else{
+        audo.click();
         window.open(`${x}`, "_self");
     }
     
 }
 toggleTheme()
-
