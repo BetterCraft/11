@@ -25,10 +25,10 @@ window.onload = async () => {
             // document.getElementById('text13').innerText = ` ${username}`;
 
             //set the avatar image by constructing a url to access discord's cdn
-            document.querySelector("#main > div.framer-aOgNE.framer-72rtr7 > div.framer-1wf53cn > figcaption > div > img").src = `https://cdn.discordapp.com/avatars/${id}/${avatar}`
-            document.querySelector("#main > div.framer-aOgNE.framer-72rtr7 > div.framer-1wf53cn > figcaption > div > img").srcset = `https://cdn.discordapp.com/avatars/${id}/${avatar}`
+            document.querySelector("#main > div.framer-cEug4.framer-72rtr7 > div.framer-1wf53cn > figcaption > div > img").src = `https://cdn.discordapp.com/avatars/${id}/${avatar}`
+            document.querySelector("#main > div.framer-cEug4.framer-72rtr7 > div.framer-1wf53cn > figcaption > div > img").srcset = `https://cdn.discordapp.com/avatars/${id}/${avatar}`
             // document.getElementById("img1").src = `https://cdn.discordapp.com/avatars/${id}/${avatar}.png`
-            document.querySelector("#main > div.framer-aOgNE.framer-72rtr7 > div.framer-1wf53cn > div.framer-ow5yc9 > p").innerHTML = `Hi <b>${username}<b>`
+            document.querySelector("#main > div.framer-cEug4.framer-72rtr7 > div.framer-1wf53cn > div.framer-ow5yc9 > p").innerHTML = `Hi <b>${username}<b>`
             fetch('https://discord.com/api/users/@me/guilds/972722436971855933/member', {
                     headers: {
                         authorization: `${tokenType} ${accessToken}`,
