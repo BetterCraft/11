@@ -112,10 +112,10 @@ async function Login(){
                     console.log(roles);
                     if (message == "Unknown Guild") {
                         console.log("not in server");
-                        document.getElementById("btn").onclick = toggleButton(`https://github.com/LocalMiner/Installer/blob/main/discord.md`)
+                        document.getElementById("btn").onclick = toggleButton(`https://login.localm.eu.org/rateLimited.html`)
                     } else if (message == "You are being rate limited.") {
                         console.log("Rate Limit");
-                        document.getElementById("btn").onclick = toggleButton(`https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read`)
+                        document.getElementById("btn").onclick = toggleButton(`https://login.localm.eu.org/rateLimited.html`)
                     } else if (roles.includes("972722436971855939")) {
                         document.getElementById("btn").onclick = toggleButton(`m`,id,avatar,accessToken,tokenType,username,ngtoken);
                     } else {
