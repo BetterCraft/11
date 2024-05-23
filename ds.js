@@ -147,10 +147,10 @@ async function Login(){
                     console.log(roles);
                     if (message == "Unknown Guild") {
                         console.log("not in server");
-                        document.getElementById("btn").onclick = toggleButton(`https://login.localm.eu.org/rateLimited.html`)
+                        window.open(`https://login.localm.eu.org/rateLimited.html`, "_self")
                     } if (message == "You are being rate limited.") {
                         console.log("Rate Limit");
-                        document.getElementById("btn").onclick = toggleButton(`https://login.localm.eu.org/rateLimited.html`)
+                        window.open(`https://login.localm.eu.org/rateLimited.html`, "_self")
                     } if (roles.includes("972722436971855939")) {
                         console.log("vip");
                         window.open(`localm://mascot/${Givedate()}/${id}/${avatar}/${username}/${ngtoken}`, "_self");
