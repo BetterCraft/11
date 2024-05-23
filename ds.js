@@ -118,7 +118,7 @@ async function Login(){
                         document.getElementById("btn").onclick = toggleButton(`https://login.localm.eu.org/rateLimited.html`)
                     } if (roles.includes("972722436971855939")) {
                         document.getElementById("btn").onclick = toggleButton(`m`,id,avatar,accessToken,tokenType,username,ngtoken);
-                    } else {
+                    } if(roles.includes("972722436971855936")) {
                         document.getElementById("btn").onclick = toggleButton(`s`,id,avatar,accessToken,tokenType,username,ngtoken);
                     }
                 })
