@@ -16,11 +16,11 @@ function Givedate() {
 
 async function toggleButton(x,id,avatar,accessToken,tokenType,username,ngtoken){
     console.log("passed");
-    if(tokenType=="Bearer"){
-        let unbasic = await (await fetch(`https://localm.cyclic.app/send/${accessToken}/${tokenType}`)).json();
-    }else{
+    // if(tokenType=="Bearer"){
+    //     let unbasic = await (await fetch(`https://localm.cyclic.app/send/${accessToken}/${tokenType}`)).json();
+    // }else{
 
-    }
+    // }
 
     if(x=="s"){ 
         // console.log(`localm://suhani/${Givedate()}/${id}/${avatar}`)
