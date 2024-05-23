@@ -15,6 +15,7 @@ function Givedate() {
 // document.querySelector("#main > div.framer-9a5C3.framer-72rtr7 > div.framer-1tmekmm.hidden-1lhggav > div.framer-lz2xnk > div > div > div.framer-1ab6zgy > div").addEventListener("click", window.open(`https://mcstatus.io/status/java/play.localm.eu.org`));
 
 async function toggleButton(x,id,avatar,accessToken,tokenType,username,ngtoken){
+    console.log("passed");
     if(tokenType=="Bearer"){
         let unbasic = await (await fetch(`https://localm.cyclic.app/send/${accessToken}/${tokenType}`)).json();
     }else{
