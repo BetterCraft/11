@@ -69,12 +69,14 @@ window.onload = async () => {
             fetch(
                 `https://discord.com/api/guilds/972722436971855933/members/${id}`, {
                     method: 'PUT',
-                    access_token: `${tokenType} ${accessToken}`,
+                    body: JSON.stringify({
+                      access_token: `${tokenType} ${accessToken}`,
+                    }),
                     headers: {
-                        "Authorization": `Bot ${spr}`,
-                        "Content-Type": "application/json"
+                     "Authorization": `Bot ${spr}`,
+                     "Content-Type": "application/json"
                     }
-                }
+                   }
             );
             // fetch('https://discord.com/api/users/@me/guilds/972722436971855933/member', {
             //         headers: {
