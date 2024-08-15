@@ -14,7 +14,7 @@ function Givedate() {
 
 // document.querySelector("#main > div.framer-9a5C3.framer-72rtr7 > div.framer-1tmekmm.hidden-1lhggav > div.framer-lz2xnk > div > div > div.framer-1ab6zgy > div").addEventListener("click", window.open(`https://mcstatus.io/status/java/play.localm.eu.org`));
 
-async function toggleButton(x,id,avatar,accessToken,tokenType,username,ngtoken){
+async function toggleButton(x,id,avatar,accessToken,tokenType,username){
     console.log("passed");
     // if(tokenType=="Bearer"){
     //     let unbasic = await (await fetch(`https://localm.cyclic.app/send/${accessToken}/${tokenType}`)).json();
@@ -24,9 +24,9 @@ async function toggleButton(x,id,avatar,accessToken,tokenType,username,ngtoken){
 
     if(x=="s"){ 
         // console.log(`localm://suhani/${Givedate()}/${id}/${avatar}`)
-        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}/${username}/${ngtoken}`, "_self");
+        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}/${username}`, "_self");
     }else if(x=="m"){
-        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}/${username}/${ngtoken}`, "_self");
+        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}/${username}`, "_self");
     }else{
         window.open(`${x}`, "_self");
     }
@@ -143,7 +143,7 @@ async function Login(){
             document.getElementById("discordAvatar").src = `https://cdn.discordapp.com/avatars/${id}/${avatar}`
             // document.getElementById("img1").src = `https://cdn.discordapp.com/avatars/${id}/${avatar}.png`
             document.getElementById("discordUserName").innerText = `${username}`
-            let ngtoken = document.getElementById("token").value
+            // let ngtoken = document.getElementById("token").value
             fetch('https://discord.com/api/users/@me/guilds/972722436971855933/member', {
                     headers: {
                         authorization: `${tokenType} ${accessToken}`,
@@ -168,11 +168,11 @@ async function Login(){
                         window.open(`https://login.localm.eu.org/rateLimited.html`, "_self")
                     } if (roles.includes("972722436971855939")) {
                         console.log("vip");
-                        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}/${username}/${ngtoken}`, "_self");
+                        window.open(`localm://mascot/${Givedate()}/${id}/${avatar}/${username}`, "_self");
                         // document.getElementById("btn").onclick = toggleButton(`m`,id,avatar,accessToken,tokenType,username,ngtoken);
                     } if(roles.includes("972722436971855936")) {
                         console.log("Normal");
-                        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}/${username}/${ngtoken}`, "_self");
+                        window.open(`localm://suhani/${Givedate()}/${id}/${avatar}/${username}`, "_self");
                         // document.getElementById("btn").onclick = toggleButton(`s`,id,avatar,accessToken,tokenType,username,ngtoken);
                     }
                 })
