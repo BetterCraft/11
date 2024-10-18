@@ -50,12 +50,18 @@ window.onload = async () => {
         })
         .then(result => result.json())
         .then(response => {
-            // console.log(response);
+            console.log(response);
             const {
                 username,
                 avatar,
                 id
             } = response;
+
+            try {
+                document.getElementById("discordDeco").src = `https://cdn.discordapp.com/avatar-decoration-presets/${response.avatar_decoration_data.asset}`
+            } catch (error) {
+                console.log(error)
+            }
             //set the welcome username string
             // document.getElementById('text13').innerText = ` ${username}`;
 
