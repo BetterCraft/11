@@ -3,15 +3,18 @@
 
 <head>
     <title>LocalX Auth</title>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CXQBS13W6V"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CXQBS13W6V"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-CXQBS13W6V');
-</script>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-CXQBS13W6V');
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="color-scheme" content="light only" />
@@ -63,11 +66,14 @@
 </head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MFJPYJVTXB"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-MFJPYJVTXB');
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-MFJPYJVTXB');
 </script>
 
 <body class="is-loading"><svg xmlns="http://www.w3.org/2000/svg" version="1.1"
@@ -93,8 +99,17 @@
         <div id="main">
             <div class="inner">
                 <section id="home-section">
-                    <div id="image01" class="image"><span class="frame"><img id="discordAvatar" src="database/image01.jpg"
-                                alt="" /></span></div>
+                    <div id="image01" class="image"><span class="frame" style="width: 217px;">
+                            <div xmlns="http://www.w3.org/1999/xhtml"
+                                style="overflow:hidden;display: flex;position: relative;flex-direction: row;height: 180px;width: 180px;">
+                                <img id="discordAvatar" src=""
+                                    style="border-radius: 50%;width: 100%;height: 100%;position: relative;top: 50%;left: 50%;transform: translate(-50%, -50%);padding: 4vh;" />
+
+                                <img id="discordDeco" src=""
+                                    style="display: block;width: 100%;height: 100%;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);" />
+
+                            </div>
+                        </span></div>
                     <h1 id="text04">Hi <strong id="discordUserName">User</strong></h1>
                     <div id="container02" class="style1 container default">
                         <div class="wrapper">
@@ -110,10 +125,12 @@
                         </div>
                     </div>
                     <ul id="icons01" class="icons">
-                        <li><a class="n01" href="https://github.com/localminer" target="_blank" aria-label="GitHub"><svg>
+                        <li><a class="n01" href="https://github.com/localminer" target="_blank"
+                                aria-label="GitHub"><svg>
                                     <use xlink:href="#icon-8c4b37645de3c276d895d87df51ba614"></use>
                                 </svg><span class="label">GitHub</span></a></li>
-                        <li><a class="n02" href="https://github.com/LocalMiner/Installer/blob/main/discord.md" target="_blank" aria-label="Discord"><svg>
+                        <li><a class="n02" href="https://github.com/LocalMiner/Installer/blob/main/discord.md"
+                                target="_blank" aria-label="Discord"><svg>
                                     <use xlink:href="#icon-3b7eeeccbb457780f277fce4669f67a0"></use>
                                 </svg><span class="label">Discord</span></a></li>
                         <li><a class="n03" href="https://localm.eu.org" target="_blank" aria-label="Globe"><svg>
