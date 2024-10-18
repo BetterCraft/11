@@ -9,11 +9,30 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-        <h1>Rate Limit Exceeded</h1>
-        <p>Dear User , currently u have exceeded rate limit. We Request you to try again in sometime (you can login after 1 min).</p>
+        <h1>❌Rate Limit Exceeded</h1>
+        <p>Dear User , currently u have exceeded rate limit. We Request you to try again in sometime (you can login after <b><span id="time">1</span></b> sec).</p>
         <p>Make sure your discord_id that you trying to login is in localminer server <a href="https://github.com/LocalMiner/Installer/blob/main/discord.md" target="_blank">Click to Join</a></p>
         <p><b>Try Login Again?</b> <a href="https://login.localm.eu.org">Click Here to login</a></p>
-        
-        <script src="" async defer></script>
+        <p>Console.</p>
+        <code>
+<pre>Discord Api Rate Limited : 401</pre>
+<pre>Multiple Fetch Request added under 1 min</pre>
+        </code>
+        <script>
+            ;(async () =>{
+                let storedTimestamp = Date.now();
+                setInterval(() => {
+                    let currentTime = Date.now();
+                    let differenceInSeconds = Math.floor((currentTime - storedTimestamp) / 1000);
+                    if(differenceInSeconds > 60){
+                        window. open("https://login.localm.eu.org","_self")
+                    }
+                    if(60 - differenceInSeconds < 11){
+                        document.getElementById("time").style.color = "red"
+                    }
+                    document.getElementById("time").innerText = 60 - differenceInSeconds
+                }, 1000);
+            })();
+        </script>
     </body>
 </html>
