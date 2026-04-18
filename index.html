@@ -1,94 +1,280 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CXQBS13W6V"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CXQBS13W6V');
-</script>
-  <style>
-    body, html {
-  height: 100%;
-  background: #fff;
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LocalM — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e0e;--s1:#161616;--s2:#1e1e1e;--border:#2c2c2c;
+  --green:#22c55e;--red:#ef4444;--text:#efefef;--t2:#909090;--t3:#555;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Familjen Grotesk',sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;overflow:hidden;
 }
 
-.container {
-  width: 200px;
-  height: 100%;
-  margin: 0 auto 0;
-  -webkit-perspective: 1000;
-  -webkit-backface-visibility: hidden;
-  background: #fff;
+/* Subtle animated grid background */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(34,197,94,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,197,94,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:gridmove 20s linear infinite;
+  pointer-events:none;
+}
+@keyframes gridmove{to{background-position:40px 40px}}
+
+body::after{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(34,197,94,.06) 0%, transparent 70%);
+  pointer-events:none;
 }
 
-.pulse-button {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  margin-left: -50px;
-  margin-top: -50px;
-  display: block;
-  width: 100px;
-  height: 100px;
-  font-size: 1.3em;
-  font-weight: light;
-  font-family: 'Trebuchet MS', sans-serif;
-  text-transform: uppercase;
-  text-align: center;
-  line-height: 100px;
-  letter-spacing: -1px;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  background: #5ad47f;
-  cursor: pointer;
-  box-shadow: 0 0 0 0 rgba(90, 212, 123, 0.5);
-  -webkit-animation: pulse 1.5s infinite;
+.wrap{
+  position:relative;z-index:1;
+  width:380px;
+  animation:pop .5s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.card{
+  background:var(--s1);border:1px solid var(--border);border-radius:16px;
+  padding:32px;text-align:center;
+  box-shadow:0 0 0 1px rgba(34,197,94,.04), 0 32px 64px rgba(0,0,0,.5);
 }
 
-.pulse-button:hover {
-  -webkit-animation: none;
+.logo{
+  font-size:42px;font-weight:700;letter-spacing:-.06em;line-height:1;margin-bottom:6px;
+}
+.logo em{color:var(--green);font-style:normal}
+.tagline{font-size:12px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-bottom:28px}
+
+/* ── States ── */
+.state{display:none}
+.state.active{display:block}
+
+/* IDLE state */
+.discord-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:13px;border-radius:10px;border:none;
+  background:#5865f2;color:#fff;font-family:'Familjen Grotesk',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:background .15s, transform .1s;
+  text-decoration:none;
+}
+.discord-btn:hover{background:#4752c4;transform:translateY(-1px)}
+.discord-btn:active{transform:translateY(0)}
+.discord-icon{width:20px;height:20px;fill:#fff;flex-shrink:0}
+.auth-note{font-size:11px;color:var(--t3);margin-top:14px;font-family:'JetBrains Mono',monospace;line-height:1.7}
+
+/* LOADING state */
+.spinner{
+  width:48px;height:48px;border-radius:50%;
+  border:3px solid var(--border);border-top-color:var(--green);
+  animation:spin .8s linear infinite;
+  margin:0 auto 20px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-text{font-size:14px;color:var(--t2);margin-bottom:6px}
+.load-sub{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* SUCCESS state */
+.success-ring{
+  width:64px;height:64px;border-radius:50%;
+  border:3px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+  animation:ring-pop .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 0 20px rgba(34,197,94,.3);
+}
+@keyframes ring-pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.success-check{font-size:28px;animation:check-in .3s .15s ease both;transform:scale(0)}
+@keyframes check-in{to{transform:scale(1)}}
+.success-title{font-size:18px;font-weight:700;margin-bottom:6px;color:var(--green)}
+.success-sub{font-size:12px;color:var(--t2);margin-bottom:20px;line-height:1.6}
+
+.profile-pill{
+  display:flex;align-items:center;gap:12px;
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;margin-bottom:14px;text-align:left;
+}
+.profile-av{width:40px;height:40px;border-radius:50%;border:2px solid var(--green);object-fit:cover;flex-shrink:0}
+.profile-name{font-size:14px;font-weight:700}
+.profile-id{font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+.launch-note{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;line-height:1.7}
+.manual-link{
+  display:inline-block;margin-top:10px;font-size:11px;
+  color:var(--green);font-family:'JetBrains Mono',monospace;
+  cursor:pointer;text-decoration:underline;
+  word-break:break-all;
 }
 
-@-webkit-keyframes pulse {
-  0% {
-    -moz-transform: scale(0.9);
-    -ms-transform: scale(0.9);
-    -webkit-transform: scale(0.9);
-    transform: scale(0.9);
-  }
-  70% {
-    -moz-transform: scale(1);
-    -ms-transform: scale(1);
-    -webkit-transform: scale(1);
-    transform: scale(1);
-    box-shadow: 0 0 0 50px rgba(90, 212, 133, 0);
-  }
-  100% {
-    -moz-transform: scale(0.9);
-    -ms-transform: scale(0.9);
-    -webkit-transform: scale(0.9);
-    transform: scale(0.9);
-    box-shadow: 0 0 0 0 rgba(90, 212, 100, 0);
-  }
+/* ERROR state */
+.error-icon{font-size:36px;margin-bottom:12px}
+.error-title{font-size:16px;font-weight:700;color:var(--red);margin-bottom:6px}
+.error-msg{font-size:12px;color:var(--t2);font-family:'JetBrains Mono',monospace;margin-bottom:16px;line-height:1.7}
+.retry-btn{
+  width:100%;padding:11px;border-radius:9px;border:1px solid rgba(239,68,68,.3);
+  background:rgba(239,68,68,.1);color:var(--red);font-family:'Familjen Grotesk',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;
 }
-  </style>
+.retry-btn:hover{background:rgba(239,68,68,.18)}
 
+/* Footer */
+.footer{text-align:center;margin-top:16px;font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+</style>
 </head>
 <body>
-<!-- partial:index.partial.html -->
-<div class='container' onclick="window.open(`https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read`,`self`)"> 
-  <span class='pulse-button'>Login</span>
+<div class="wrap">
+  <div class="card">
+    <div class="logo">LOCAL<em>M</em>.</div>
+    <div class="tagline">// discord auth · v1.12</div>
+
+    <!-- STATE: idle (login button) -->
+    <div class="state active" id="state-idle">
+      <a class="discord-btn" id="discord-link" href="https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read">
+        <svg class="discord-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+        </svg>
+        Login with Discord
+      </a>
+      <div class="auth-note">
+        You'll be redirected to Discord's login page.<br/>
+        After authorizing, LocalM opens automatically.
+      </div>
+    </div>
+
+    <!-- STATE: loading (fetching user data) -->
+    <div class="state" id="state-loading">
+      <div class="spinner"></div>
+      <div class="load-text">Fetching your profile…</div>
+      <div class="load-sub">talking to Discord API</div>
+    </div>
+
+    <!-- STATE: success -->
+    <div class="state" id="state-success">
+      <div class="success-ring"><span class="success-check">✓</span></div>
+      <div class="success-title">Logged in!</div>
+      <div class="success-sub">Opening LocalM…</div>
+      <div class="profile-pill" id="profile-pill">
+        <img class="profile-av" id="profile-av" src="" alt="avatar"/>
+        <div>
+          <div class="profile-name" id="profile-name">—</div>
+          <div class="profile-id" id="profile-id">—</div>
+        </div>
+      </div>
+      <div class="launch-note">
+        If the app didn't open automatically:<br/>
+        <span class="manual-link" id="manual-link" onclick="fireLink()">Click here to open LocalM</span>
+      </div>
+    </div>
+
+    <!-- STATE: error -->
+    <div class="state" id="state-error">
+      <div class="error-icon">⚠️</div>
+      <div class="error-title">Authentication failed</div>
+      <div class="error-msg" id="error-msg">Something went wrong.</div>
+      <button class="retry-btn" onclick="retry()">Try again</button>
+    </div>
+
+  </div>
+  <div class="footer">login.localm.eu.org · secure · no passwords stored</div>
 </div>
-<!-- partial -->
-  
+
+<script>
+// ── State management ──────────────────────────────────────
+const states = ['idle','loading','success','error'];
+function showState(s) {
+  states.forEach(name => {
+    const el = document.getElementById('state-'+name);
+    el.classList.toggle('active', name===s);
+  });
+}
+
+// ── Parse the OAuth fragment on page load ─────────────────
+let deepLink = '';
+
+window.addEventListener('load', async () => {
+  const hash   = window.location.hash.substring(1); // remove #
+  if (!hash) { showState('idle'); return; }
+
+  const params = new URLSearchParams(hash);
+  const token  = params.get('access_token');
+  const type   = params.get('token_type');
+
+  if (!token) { showState('idle'); return; }
+
+  // We have a token — fetch the user
+  showState('loading');
+  try {
+    await handleToken(token, type);
+  } catch(e) {
+    showError(e.message || 'Failed to fetch Discord profile');
+  }
+});
+
+async function handleToken(token, type) {
+  // 1. Fetch Discord user info
+  const res = await fetch('https://discord.com/api/users/@me', {
+    headers: { Authorization: `${type} ${token}` }
+  });
+  if (!res.ok) throw new Error(`Discord API error: ${res.status}`);
+  const user = await res.json();
+
+  // user: { id, username, avatar, discriminator, ... }
+  const userId     = user.id;
+  const username   = user.username + (user.discriminator && user.discriminator !== '0' ? '#'+user.discriminator : '');
+  const avatarHash = user.avatar || '';
+  const avatarUrl  = avatarHash
+    ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}`
+    : `https://cdn.discordapp.com/embed/avatars/${(BigInt(userId) >> 22n) % 6n}.png`;
+
+  // 2. Build the date (today + 2 days = session length from Electron's POV)
+  //    We put today's date in the link; Electron adds 2 days on receipt
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+  // 3. Build the localme:// deep link
+  // localme://DATE/USER_ID/AVATAR_HASH/USERNAME
+  deepLink = `localme://${today}/${userId}/${avatarHash}/${username}`;
+
+  // 4. Show success state
+  document.getElementById('profile-av').src         = avatarUrl;
+  document.getElementById('profile-name').textContent = '@'+username;
+  document.getElementById('profile-id').textContent   = 'ID: '+userId;
+  document.getElementById('manual-link').textContent  = deepLink.slice(0,60)+'…';
+
+  showState('success');
+
+  // 5. Fire the deep link
+  fireLink();
+
+  // 6. Clear the fragment from URL (hide the token from browser history)
+  history.replaceState(null, '', window.location.pathname);
+}
+
+function fireLink() {
+  if (deepLink) window.location.href = deepLink;
+}
+
+function showError(msg) {
+  document.getElementById('error-msg').textContent = msg;
+  showState('error');
+}
+
+function retry() {
+  // Clear hash and go back to idle
+  history.replaceState(null, '', window.location.pathname);
+  showState('idle');
+}
+</script>
 </body>
 </html>
-
-
