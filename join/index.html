@@ -1,170 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Room - LocalM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #1e1e1e;
-            --card: rgba(37, 37, 37, 0.6);
-            --green: #22c55e;
-            --tx: #ffffff;
-            --tx2: #a1a1aa;
-        }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Geist', system-ui, sans-serif;
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at center, #2a2a2a 0%, #1e1e1e 100%);
-            color: var(--tx);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LocalM — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e0e;--s1:#161616;--s2:#1e1e1e;--border:#2c2c2c;
+  --green:#22c55e;--red:#ef4444;--text:#efefef;--t2:#909090;--t3:#555;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Familjen Grotesk',sans-serif;
+  background:var(--bg);color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;overflow:hidden;
+}
 
-        .container {
-            background: var(--card);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 40px;
-            border-radius: 24px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
+/* Subtle animated grid background */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(34,197,94,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,197,94,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:gridmove 20s linear infinite;
+  pointer-events:none;
+}
+@keyframes gridmove{to{background-position:40px 40px}}
 
-        .logo {
-            font-size: 36px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            margin-bottom: 24px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        .logo span { color: var(--green); }
+body::after{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(34,197,94,.06) 0%, transparent 70%);
+  pointer-events:none;
+}
 
-        .title {
-            font-size: 20px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
+.wrap{
+  position:relative;z-index:1;
+  width:380px;
+  animation:pop .5s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
-        .subtitle {
-            font-size: 14px;
-            color: var(--tx2);
-            margin-bottom: 32px;
-            line-height: 1.5;
-        }
+.card{
+  background:var(--s1);border:1px solid var(--border);border-radius:16px;
+  padding:32px;text-align:center;
+  box-shadow:0 0 0 1px rgba(34,197,94,.04), 0 32px 64px rgba(0,0,0,.5);
+}
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 14px 0;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-            border: none;
-            cursor: pointer;
-        }
+.logo{
+  font-size:42px;font-weight:700;letter-spacing:-.06em;line-height:1;margin-bottom:6px;
+}
+.logo em{color:var(--green);font-style:normal}
+.tagline{font-size:12px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-bottom:28px}
 
-        .btn-primary {
-            background: var(--green);
-            color: #000;
-            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3);
-        }
+/* ── States ── */
+.state{display:none}
+.state.active{display:block}
 
-        .btn-secondary {
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--tx);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .btn-secondary:hover {
-            background: rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
+/* IDLE state */
+.discord-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:13px;border-radius:10px;border:none;
+  background:#5865f2;color:#fff;font-family:'Familjen Grotesk',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:background .15s, transform .1s;
+  text-decoration:none;
+}
+.discord-btn:hover{background:#4752c4;transform:translateY(-1px)}
+.discord-btn:active{transform:translateY(0)}
+.discord-icon{width:20px;height:20px;fill:#fff;flex-shrink:0}
+.auth-note{font-size:11px;color:var(--t3);margin-top:14px;font-family:'JetBrains Mono',monospace;line-height:1.7}
 
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: var(--green);
-            border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
-            margin: 0 auto 24px;
-        }
+/* LOADING state */
+.spinner{
+  width:48px;height:48px;border-radius:50%;
+  border:3px solid var(--border);border-top-color:var(--green);
+  animation:spin .8s linear infinite;
+  margin:0 auto 20px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-text{font-size:14px;color:var(--t2);margin-bottom:6px}
+.load-sub{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .divider {
-            margin: 24px 0;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.08);
-            width: 100%;
-        }
-    </style>
+/* SUCCESS state */
+.success-ring{
+  width:64px;height:64px;border-radius:50%;
+  border:3px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+  animation:ring-pop .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 0 20px rgba(34,197,94,.3);
+}
+@keyframes ring-pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.success-check{font-size:28px;animation:check-in .3s .15s ease both;transform:scale(0)}
+@keyframes check-in{to{transform:scale(1)}}
+.success-title{font-size:18px;font-weight:700;margin-bottom:6px;color:var(--green)}
+.success-sub{font-size:12px;color:var(--t2);margin-bottom:20px;line-height:1.6}
+
+.profile-pill{
+  display:flex;align-items:center;gap:12px;
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;margin-bottom:14px;text-align:left;
+}
+.profile-av{width:40px;height:40px;border-radius:50%;border:2px solid var(--green);object-fit:cover;flex-shrink:0}
+.profile-name{font-size:14px;font-weight:700}
+.profile-id{font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+.launch-note{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;line-height:1.7}
+.manual-link{
+  display:inline-block;margin-top:10px;font-size:11px;
+  color:var(--green);font-family:'JetBrains Mono',monospace;
+  cursor:pointer;text-decoration:underline;
+  word-break:break-all;
+}
+
+/* ERROR state */
+.error-icon{font-size:36px;margin-bottom:12px}
+.error-title{font-size:16px;font-weight:700;color:var(--red);margin-bottom:6px}
+.error-msg{font-size:12px;color:var(--t2);font-family:'JetBrains Mono',monospace;margin-bottom:16px;line-height:1.7}
+.retry-btn{
+  width:100%;padding:11px;border-radius:9px;border:1px solid rgba(239,68,68,.3);
+  background:rgba(239,68,68,.1);color:var(--red);font-family:'Familjen Grotesk',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;
+}
+.retry-btn:hover{background:rgba(239,68,68,.18)}
+
+/* Footer */
+.footer{text-align:center;margin-top:16px;font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <div class="card">
+    <div class="logo">LOCAL<em>M</em>.</div>
+    <div class="tagline">// discord auth · v1.12</div>
 
-    <div class="container">
-        <div class="logo">LOCAL<span>M</span>.</div>
-        
-        <div class="spinner" id="spinner"></div>
-        
-        <div class="title" id="status-title">Joining Room...</div>
-        <div class="subtitle" id="status-text">Your browser should prompt you to open LocalM. If nothing happens, click below.</div>
-        
-        <a href="#" id="btn-open" class="btn btn-primary" style="display:none;">Open in LocalM App</a>
-        
-        <div class="divider"></div>
-        
-        <div style="font-size: 12px; color: var(--tx2); margin-bottom: 12px; font-weight: 600;">Don't have the app installed?</div>
-        <a href="https://github.com/LocalMiner/LOCALMP/releases/latest" class="btn btn-secondary">Download LocalM</a>
+    <div class="state active" id="state-idle">
+      <a class="discord-btn" id="discord-link" href="https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read">
+        <svg class="discord-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+        </svg>
+        Login with Discord
+      </a>
+      <div class="auth-note">
+        You'll be redirected to Discord's login page.<br/>
+        After authorizing, LocalM opens automatically.
+      </div>
     </div>
 
-    <script>
-        // 1. Grab the ?code=XYZ from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomCode = urlParams.get('code');
+    <div class="state" id="state-loading">
+      <div class="spinner"></div>
+      <div class="load-text" id="load-text">Fetching your profile…</div>
+      <div class="load-sub">talking to Discord API</div>
+    </div>
 
-        if (roomCode) {
-            // 2. Format the Deep Link specifically for your protocol
-            const deepLink = `localme://join/${roomCode}`;
-            
-            // 3. Set up the manual "Open" button just in case
-            const openBtn = document.getElementById('btn-open');
-            openBtn.href = deepLink;
-            openBtn.style.display = 'inline-flex';
+    <div class="state" id="state-join">
+      <div class="error-icon" style="font-size:32px;">🛑</div>
+      <div class="error-title" style="color:#fff;">Server Access Required</div>
+      <div class="error-msg" style="margin-bottom: 20px;">You must join the LocalM Discord server to continue.</div>
+      <a class="discord-btn" style="margin-bottom:12px; background:var(--green); color:#000;" href="https://discord.gg/AB9jZBNd8W" target="_blank">
+        Join Discord Server
+      </a>
+      <button class="retry-btn" style="border-color:var(--border); color:var(--text); background:transparent;" onclick="verifyGuild()">I have joined, check again</button>
+    </div>
 
-            // 4. Try to force the browser to open the app automatically
-            setTimeout(() => {
-                window.location.href = deepLink;
-            }, 600); // 600ms delay so the page has time to render and the user sees the spinner
-            
-        } else {
-            // Error handling if someone goes to the page without a room code
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('status-title').innerText = 'Invalid Link';
-            document.getElementById('status-title').style.color = '#ef4444'; // Red color
-            document.getElementById('status-text').innerText = 'No room code was found. Please make sure you clicked a valid Discord invite link.';
-        }
-    </script>
+    <div class="state" id="state-success">
+      <div class="success-ring"><span class="success-check">✓</span></div>
+      <div class="success-title">Logged in!</div>
+      <div class="success-sub">Opening LocalM…</div>
+      <div class="profile-pill" id="profile-pill">
+        <img class="profile-av" id="profile-av" src="" alt="avatar"/>
+        <div>
+          <div class="profile-name" id="profile-name">—</div>
+          <div class="profile-id" id="profile-id">—</div>
+        </div>
+      </div>
+      <div class="launch-note">
+        If the app didn't open automatically:<br/>
+        <span class="manual-link" id="manual-link" onclick="fireLink()">Click here to open LocalM</span>
+      </div>
+    </div>
 
+    <div class="state" id="state-error">
+      <div class="error-icon">⚠️</div>
+      <div class="error-title">Authentication failed</div>
+      <div class="error-msg" id="error-msg">Something went wrong.</div>
+      <button class="retry-btn" onclick="retry()">Try again</button>
+    </div>
+
+  </div>
+  <div class="footer">login.localm.eu.org · secure · no passwords stored</div>
+</div>
+
+<script>
+// ── State management ──────────────────────────────────────
+const states = ['idle','loading','success','error','join'];
+function showState(s) {
+  states.forEach(name => {
+    const el = document.getElementById('state-'+name);
+    if(el) el.classList.toggle('active', name===s);
+  });
+}
+
+// ── Global Variables ──────────────────────────────────────
+let deepLink = '';
+let currentToken = '';
+let currentTokenType = '';
+const REQUIRED_GUILD_ID = '972722436971855933';
+
+// ── Parse the OAuth fragment on page load ─────────────────
+window.addEventListener('load', async () => {
+  const hash = window.location.hash.substring(1); 
+  if (!hash) { showState('idle'); return; }
+
+  const params = new URLSearchParams(hash);
+  currentToken = params.get('access_token');
+  currentTokenType = params.get('token_type');
+
+  if (!currentToken) { showState('idle'); return; }
+
+  showState('loading');
+  try {
+    await handleToken(currentToken, currentTokenType);
+  } catch(e) {
+    showError(e.message || 'Failed to fetch Discord profile');
+  }
+});
+
+async function handleToken(token, type) {
+  document.getElementById('load-text').textContent = 'Fetching your profile…';
+  
+  // 1. Fetch Discord user info
+  const res = await fetch('https://discord.com/api/users/@me', {
+    headers: { Authorization: `${type} ${token}` }
+  });
+  if (!res.ok) throw new Error(`Discord API error: ${res.status}`);
+  const user = await res.json();
+
+  const userId     = user.id;
+  const username   = user.username + (user.discriminator && user.discriminator !== '0' ? '#'+user.discriminator : '');
+  const avatarHash = user.avatar || '';
+  const avatarUrl  = avatarHash
+    ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}`
+    : `https://cdn.discordapp.com/embed/avatars/${(BigInt(userId) >> 22n) % 6n}.png`;
+
+  const today = new Date().toISOString().split('T')[0]; 
+  deepLink = `localme://${today}/${userId}/${avatarHash}/${username}`;
+
+  document.getElementById('profile-av').src         = avatarUrl;
+  document.getElementById('profile-name').textContent = '@'+username;
+  document.getElementById('profile-id').textContent   = 'ID: '+userId;
+  document.getElementById('manual-link').textContent  = deepLink.slice(0,60)+'…';
+
+  // 2. Verify Server Membership Before Proceeding
+  await verifyGuild();
+}
+
+async function verifyGuild() {
+  showState('loading');
+  document.getElementById('load-text').textContent = 'Checking server membership…';
+
+  try {
+    const res = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: { Authorization: `${currentTokenType} ${currentToken}` }
+    });
+    
+    if (!res.ok) throw new Error(`Failed to verify servers: ${res.status}`);
+    
+    const guilds = await res.json();
+    const isInServer = guilds.some(guild => guild.id === REQUIRED_GUILD_ID);
+
+    if (isInServer) {
+      // User is in the server - Grant Access
+      showState('success');
+      fireLink();
+      history.replaceState(null, '', window.location.pathname);
+    } else {
+      // User is NOT in the server - Ask them to join
+      showState('join');
+    }
+  } catch(e) {
+    showError(e.message);
+  }
+}
+
+function fireLink() {
+  if (deepLink) window.location.href = deepLink;
+}
+
+function showError(msg) {
+  document.getElementById('error-msg').textContent = msg;
+  showState('error');
+}
+
+function retry() {
+  history.replaceState(null, '', window.location.pathname);
+  showState('idle');
+}
+</script>
 </body>
 </html>
