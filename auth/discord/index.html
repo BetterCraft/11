@@ -139,7 +139,6 @@ body::after{
     <div class="logo">LOCAL<em>M</em>.</div>
     <div class="tagline">// discord auth · v1.12</div>
 
-    <!-- STATE: idle (login button) -->
     <div class="state active" id="state-idle">
       <a class="discord-btn" id="discord-link" href="https://discord.com/api/oauth2/authorize?client_id=964384185802436648&redirect_uri=http%3A%2F%2Flogin.localm.eu.org%2Fauth%2Fdiscord&response_type=token&scope=identify%20guilds%20guilds.join%20guilds.members.read">
         <svg class="discord-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -153,14 +152,22 @@ body::after{
       </div>
     </div>
 
-    <!-- STATE: loading (fetching user data) -->
     <div class="state" id="state-loading">
       <div class="spinner"></div>
-      <div class="load-text">Fetching your profile…</div>
+      <div class="load-text" id="load-text">Fetching your profile…</div>
       <div class="load-sub">talking to Discord API</div>
     </div>
 
-    <!-- STATE: success -->
+    <div class="state" id="state-join">
+      <div class="error-icon" style="font-size:32px;">🛑</div>
+      <div class="error-title" style="color:#fff;">Server Access Required</div>
+      <div class="error-msg" style="margin-bottom: 20px;">You must join the LocalM Discord server to continue.</div>
+      <a class="discord-btn" style="margin-bottom:12px; background:var(--green); color:#000;" href="https://discord.gg/AB9jZBNd8W" target="_blank">
+        Join Discord Server
+      </a>
+      <button class="retry-btn" style="border-color:var(--border); color:var(--text); background:transparent;" onclick="verifyGuild()">I have joined, check again</button>
+    </div>
+
     <div class="state" id="state-success">
       <div class="success-ring"><span class="success-check">✓</span></div>
       <div class="success-title">Logged in!</div>
@@ -178,7 +185,6 @@ body::after{
       </div>
     </div>
 
-    <!-- STATE: error -->
     <div class="state" id="state-error">
       <div class="error-icon">⚠️</div>
       <div class="error-title">Authentication failed</div>
@@ -192,37 +198,42 @@ body::after{
 
 <script>
 // ── State management ──────────────────────────────────────
-const states = ['idle','loading','success','error'];
+const states = ['idle','loading','success','error','join'];
 function showState(s) {
   states.forEach(name => {
     const el = document.getElementById('state-'+name);
-    el.classList.toggle('active', name===s);
+    if(el) el.classList.toggle('active', name===s);
   });
 }
 
-// ── Parse the OAuth fragment on page load ─────────────────
+// ── Global Variables ──────────────────────────────────────
 let deepLink = '';
+let currentToken = '';
+let currentTokenType = '';
+const REQUIRED_GUILD_ID = '972722436971855933';
 
+// ── Parse the OAuth fragment on page load ─────────────────
 window.addEventListener('load', async () => {
-  const hash   = window.location.hash.substring(1); // remove #
+  const hash = window.location.hash.substring(1); 
   if (!hash) { showState('idle'); return; }
 
   const params = new URLSearchParams(hash);
-  const token  = params.get('access_token');
-  const type   = params.get('token_type');
+  currentToken = params.get('access_token');
+  currentTokenType = params.get('token_type');
 
-  if (!token) { showState('idle'); return; }
+  if (!currentToken) { showState('idle'); return; }
 
-  // We have a token — fetch the user
   showState('loading');
   try {
-    await handleToken(token, type);
+    await handleToken(currentToken, currentTokenType);
   } catch(e) {
     showError(e.message || 'Failed to fetch Discord profile');
   }
 });
 
 async function handleToken(token, type) {
+  document.getElementById('load-text').textContent = 'Fetching your profile…';
+  
   // 1. Fetch Discord user info
   const res = await fetch('https://discord.com/api/users/@me', {
     headers: { Authorization: `${type} ${token}` }
@@ -230,7 +241,6 @@ async function handleToken(token, type) {
   if (!res.ok) throw new Error(`Discord API error: ${res.status}`);
   const user = await res.json();
 
-  // user: { id, username, avatar, discriminator, ... }
   const userId     = user.id;
   const username   = user.username + (user.discriminator && user.discriminator !== '0' ? '#'+user.discriminator : '');
   const avatarHash = user.avatar || '';
@@ -238,27 +248,44 @@ async function handleToken(token, type) {
     ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}`
     : `https://cdn.discordapp.com/embed/avatars/${(BigInt(userId) >> 22n) % 6n}.png`;
 
-  // 2. Build the date (today + 2 days = session length from Electron's POV)
-  //    We put today's date in the link; Electron adds 2 days on receipt
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-
-  // 3. Build the localme:// deep link
-  // localme://DATE/USER_ID/AVATAR_HASH/USERNAME
+  const today = new Date().toISOString().split('T')[0]; 
   deepLink = `localme://${today}/${userId}/${avatarHash}/${username}`;
 
-  // 4. Show success state
   document.getElementById('profile-av').src         = avatarUrl;
   document.getElementById('profile-name').textContent = '@'+username;
   document.getElementById('profile-id').textContent   = 'ID: '+userId;
   document.getElementById('manual-link').textContent  = deepLink.slice(0,60)+'…';
 
-  showState('success');
+  // 2. Verify Server Membership Before Proceeding
+  await verifyGuild();
+}
 
-  // 5. Fire the deep link
-  fireLink();
+async function verifyGuild() {
+  showState('loading');
+  document.getElementById('load-text').textContent = 'Checking server membership…';
 
-  // 6. Clear the fragment from URL (hide the token from browser history)
-  history.replaceState(null, '', window.location.pathname);
+  try {
+    const res = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: { Authorization: `${currentTokenType} ${currentToken}` }
+    });
+    
+    if (!res.ok) throw new Error(`Failed to verify servers: ${res.status}`);
+    
+    const guilds = await res.json();
+    const isInServer = guilds.some(guild => guild.id === REQUIRED_GUILD_ID);
+
+    if (isInServer) {
+      // User is in the server - Grant Access
+      showState('success');
+      fireLink();
+      history.replaceState(null, '', window.location.pathname);
+    } else {
+      // User is NOT in the server - Ask them to join
+      showState('join');
+    }
+  } catch(e) {
+    showError(e.message);
+  }
 }
 
 function fireLink() {
@@ -271,7 +298,6 @@ function showError(msg) {
 }
 
 function retry() {
-  // Clear hash and go back to idle
   history.replaceState(null, '', window.location.pathname);
   showState('idle');
 }
