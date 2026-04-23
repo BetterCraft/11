@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>LocalM — Login</title>
+<link id="favicon" rel="icon" type="image/x-icon" href="../../assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -134,6 +135,39 @@ body::after{
 </style>
 </head>
 <body>
+
+    <script>
+        const originalTitle = document.title;
+        const originalFavicon = document.getElementById('favicon').href;
+        
+        // The "Away" assets
+        const awayTitles = ["Hey! Come Back!", "Hey! Come Back!"];
+        const awayFavicon = ["../../assets/shock.png","../../assets/worried.png"] // Replace with your "away" icon URL
+        
+        let titleInterval;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // 1. Logic for when the user LEAVES the tab
+                let i = 0;
+                // We cycle the titles every 2 seconds to grab attention
+                titleInterval = setInterval(() => {
+                    document.title = awayTitles[i % awayTitles.length];
+                    // Change the favicon
+                    document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
+                    i++;
+                }, 2000);
+
+                
+                
+            } else {
+                // 2. Logic for when the user RETURNS to the tab
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                document.getElementById('favicon').href = originalFavicon;
+            }
+        });
+    </script>
 <div class="wrap">
   <div class="card">
     <div class="logo">LOCAL<em>M</em>.</div>
@@ -179,7 +213,7 @@ body::after{
           <div class="profile-id" id="profile-id">—</div>
         </div>
       </div>
-      <div class="launch-note">
+      <div class="launch-note" style="display: none;">
         If the app didn't open automatically:<br/>
         <span class="manual-link" id="manual-link" onclick="fireLink()">Click here to open LocalM</span>
       </div>
