@@ -154,17 +154,19 @@ body::after{
                 titleInterval = setInterval(() => {
                     document.title = awayTitles[i % awayTitles.length];
                     // Change the favicon
-                    document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
+                    if(document.getElementById('favicon')) {
+                      document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
+                    }
                     i++;
                 }, 2000);
 
-                
-                
             } else {
                 // 2. Logic for when the user RETURNS to the tab
                 clearInterval(titleInterval);
                 document.title = originalTitle;
-                document.getElementById('favicon').href = originalFavicon;
+                if(document.getElementById('favicon')) {
+                  document.getElementById('favicon').href = originalFavicon;
+                }
             }
         });
     </script>
@@ -268,7 +270,7 @@ window.addEventListener('load', async () => {
 async function handleToken(token, type) {
   document.getElementById('load-text').textContent = 'Fetching your profile…';
   
-  // 1. Fetch Discord user info
+  // 1. Fetch Discord user info purely to show it on the UI
   const res = await fetch('https://discord.com/api/users/@me', {
     headers: { Authorization: `${type} ${token}` }
   });
@@ -282,13 +284,15 @@ async function handleToken(token, type) {
     ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}`
     : `https://cdn.discordapp.com/embed/avatars/${(BigInt(userId) >> 22n) % 6n}.png`;
 
-  const today = new Date().toISOString().split('T')[0]; 
-  deepLink = `localme://${today}/${userId}/${avatarHash}/${username}`;
+  // === THE CRITICAL SECURITY CHANGE ===
+  // Bounce only the raw token to the Electron App. 
+  // main.js will do its own secure API calls with it.
+  deepLink = `localme://token/${token}`;
 
   document.getElementById('profile-av').src         = avatarUrl;
   document.getElementById('profile-name').textContent = '@'+username;
   document.getElementById('profile-id').textContent   = 'ID: '+userId;
-  document.getElementById('manual-link').textContent  = deepLink.slice(0,60)+'…';
+  document.getElementById('manual-link').textContent  = deepLink.slice(0,35)+'…';
 
   // 2. Verify Server Membership Before Proceeding
   await verifyGuild();
