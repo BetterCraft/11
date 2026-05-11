@@ -207,7 +207,7 @@ body::after{
     <div class="state" id="state-success">
       <div class="success-ring"><span class="success-check">✓</span></div>
       <div class="success-title">Logged in!</div>
-      <div class="success-sub">Opening LocalM…</div>
+      <div class="success-sub">Opening App…</div>
       <div class="profile-pill" id="profile-pill">
         <img class="profile-av" id="profile-av" src="" alt="avatar"/>
         <div>
@@ -215,9 +215,9 @@ body::after{
           <div class="profile-id" id="profile-id">—</div>
         </div>
       </div>
-      <div class="launch-note" style="display: none;">
+      <div class="launch-note">
         If the app didn't open automatically:<br/>
-        <span class="manual-link" id="manual-link" onclick="fireLink()">Click here to open LocalM</span>
+        <span class="manual-link" id="manual-link" onclick="fireLink()">Click here to open</span>
       </div>
     </div>
 
@@ -247,6 +247,16 @@ let deepLink = '';
 let currentToken = '';
 let currentTokenType = '';
 const REQUIRED_GUILD_ID = '972722436971855933';
+
+// ── Pre-OAuth Param Caching ───────────────────────────────
+// We need to capture ?type= and ?target= BEFORE they go to Discord
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.has('type')) {
+  sessionStorage.setItem('authType', searchParams.get('type'));
+}
+if (searchParams.has('target')) {
+  sessionStorage.setItem('authTarget', searchParams.get('target'));
+}
 
 // ── Parse the OAuth fragment on page load ─────────────────
 window.addEventListener('load', async () => {
@@ -284,10 +294,17 @@ async function handleToken(token, type) {
     ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}`
     : `https://cdn.discordapp.com/embed/avatars/${(BigInt(userId) >> 22n) % 6n}.png`;
 
-  // === THE CRITICAL SECURITY CHANGE ===
-  // Bounce only the raw token to the Electron App. 
-  // main.js will do its own secure API calls with it.
-  deepLink = `localme://token/${token}`;
+  // === THE CRITICAL SECURITY & ROUTING CHANGE ===
+  const savedType = sessionStorage.getItem('authType');
+  const savedTarget = sessionStorage.getItem('authTarget');
+
+  if (savedType === 'Fabric' && savedTarget) {
+    // Fabric flow -> open localhost api
+    deepLink = `http://localhost:${savedTarget}/api/token/${token}`;
+  } else {
+    // Normal flow -> bounce to electron protocol
+    deepLink = `localme://token/${token}`;
+  }
 
   document.getElementById('profile-av').src         = avatarUrl;
   document.getElementById('profile-name').textContent = '@'+username;
@@ -315,6 +332,11 @@ async function verifyGuild() {
     if (isInServer) {
       // User is in the server - Grant Access
       showState('success');
+      
+      // We can clear session variables so they don't leak into future generic visits
+      sessionStorage.removeItem('authType');
+      sessionStorage.removeItem('authTarget');
+
       fireLink();
       history.replaceState(null, '', window.location.pathname);
     } else {
